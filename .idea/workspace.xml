@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2adf1a25-46d8-4914-a9db-343e56c7c737" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/library-service-administrator/.idea/$CACHE_FILE$" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library-service-administrator/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library-service-administrator/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library-service-administrator/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library-service-administrator/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library-service-administrator/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library-service-administrator/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library-service-administrator/app/src/main/res/drawable-v24/table_inside.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library-service-administrator/app/src/main/res/drawable-v24/table_inside_gray.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/library-service-administrator/app/src/main/res/drawable/table_outside.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="27asGJDp5zv8i3ORlwOQuv8IjUN" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/library-service-administrator" />
+    <property name="settings.editor.selected.configurable" value="experimental" />
+    <property name="settings.editor.splitter.proportion" value="0.21100917" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2adf1a25-46d8-4914-a9db-343e56c7c737" name="Default Changelist" comment="" />
+      <created>1649569433452</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1649569433452</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1220" y="275" key="FileChooserDialogImpl" timestamp="1649569447091">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1220" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1649569447091" />
+  </component>
+</project>
