@@ -11,7 +11,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class HomeActivity : AppCompatActivity() {
-    val api by lazy { APIS.create() }
+    val api = APIS.create()
     var bookList = arrayListOf<List_Book_info>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,11 +23,16 @@ class HomeActivity : AppCompatActivity() {
 
         btn_photo.setOnClickListener {
             val input_data_bookName = findViewById<EditText>(R.id.et_photo_url)
-            val data = PostModel(input_data_bookName.text.toString())
+
+            //val data = PostModel(input_data_bookName.text.toString())
             bookList.clear()
+            lv_book_info.adapter = null
+
             // Retrofit Test
             //Post방식으로 서버에 전달할 데이터를 파라미터에 입력
-            api.post_input(data).enqueue(object: Callback<List<PostResult>> {
+            api.post_input(
+                    input_data_bookName.text.toString()
+            ).enqueue(object: Callback<List<PostResult>> {
                 override fun onResponse(call: Call<List<PostResult>>, response: Response<List<PostResult>>) {
                     if(!response.body().toString().isEmpty()) {
                         val re_size = response.body()?.size

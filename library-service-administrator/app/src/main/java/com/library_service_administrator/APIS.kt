@@ -5,21 +5,24 @@ import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface APIS {
     //post -> php 파일 주소
+    @FormUrlEncoded
     @POST("/BookStatusRequest.php")
     @Headers(
         "accept: application/json",
-        "content-type: application/json; charset=utf-8"
+        //"content-type: application/json; charset=utf-8"
+        "content-type: application/x-www-form-urlencoded; charset=utf-8"
     )
 
     //post로 서버에 데이터를 보내는 메서드
     fun post_input(
-        @Body jsonparams: PostModel
+        @Field("input") input: String
     ): Call<List<PostResult>>
 
 
