@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@drawable/table_inside"
-                android:id="@+id/tv_book_count"
+                android:id="@+id/tv_book_quantity"
                 android:text=" 보유 수량 "
                 android:textAlignment="center"
                 android:textSize="20sp"
