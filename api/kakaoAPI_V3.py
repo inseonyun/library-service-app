@@ -12,7 +12,7 @@ LIMIT_PX = 1024
 LIMIT_BYTE = 1024*1024  # 1MB
 LIMIT_BOX = 40
 
-MYAPP_KEY = '여기에 키 value 적으면 됨'
+MYAPP_KEY = '여기에 API Key값 입력'
 
 def kakao_ocr_resize(image_path: str):
     """
@@ -101,8 +101,8 @@ def main(file_path):
             cut_img2 = org_img[y:nextY+nextH]
 
             # 자른 이미지 출력
-            cv2_imshow(cut_img)
-            cv2_imshow(cut_img2)
+            #cv2_imshow(cut_img)
+            #cv2_imshow(cut_img2)
             word = outputdata['result'][i]['recognition_words'][0]
             if re.search('\d', outputdata['result'][i + 1]['recognition_words'][0]) == None:
               continue
@@ -113,7 +113,7 @@ def main(file_path):
             # 자른 이미지
             cut_img = org_img[y:y+h, x:x+w]
             # 자른 이미지 출력
-            cv2_imshow(cut_img)
+            #cv2_imshow(cut_img)
 
           # 양 끝에 하이폰 있으면 제거
           word = word.strip('-')
