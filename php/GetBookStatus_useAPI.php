@@ -2,13 +2,11 @@
     $connection = mysqli_connect("localhost", "ID", "password", "schema");
     mysqli_query($connection,'SET NAMES utf8');
 
-    $userID = $_POST["userID"];
-
     // 파일 받기
     $img_File = $_FILES['uploaded_file']['name'];
 
     // 저장할 경로
-    $save_path = $_SERVER['DOCUMENT_ROOT'].'/img/';
+    $save_path = $_SERVER['DOCUMENT_ROOT'].'/photos/';
     $tempData = $_FILES['uploaded_file']['tmp_name'];
     $file_name = basename($_FILES["uploaded_file"]["name"]);
 
@@ -17,8 +15,8 @@
     // // 임시폴더에서  ->  경로 이동 .파일이름
     if(isset($img_File)){
         // 옮길려고 하는 경로에 해당 이미지 파일이 이미 존재하면 지우고 옮김
-        if(file_exists($save_path.$file_name)) {
-            unlink($save_path.$file_name);
+        if(file_exists($file_path)) {
+            unlink($file_path);
         }
 
         if(move_uploaded_file($tempData, $file_path)){

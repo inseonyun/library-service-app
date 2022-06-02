@@ -8,8 +8,8 @@ data class PostModel(
 )
 
 data class PostResult(
-    var ISBN: String? = null,
     var Name: String? = null,
+    var ISBN: String? = null,
     var Writer: String? = null,
     var Quantity: String? = null
 )

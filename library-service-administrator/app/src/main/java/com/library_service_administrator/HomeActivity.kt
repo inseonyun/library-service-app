@@ -7,29 +7,39 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.net.toFile
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.library_service_administrator.databinding.ActivityHomeBinding
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 
 class HomeActivity : AppCompatActivity() {
-    val api = APIS.create()
+    // val api = APIS.create()
     var bookList = arrayListOf<List_Book_info>()
     // ViewBinding
     lateinit var binding : ActivityHomeBinding
-
+    val ipAddress = "여기 ip"
     // Permisisons
     val PERMISSIONS = arrayOf(
             Manifest.permission.CAMERA,
@@ -43,6 +53,9 @@ class HomeActivity : AppCompatActivity() {
     // 원본 사진이 저장되는 Uri
     private var photoUri: Uri? = null
 
+    // 포토 파일네임
+    private var photoFileName = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
@@ -51,16 +64,13 @@ class HomeActivity : AppCompatActivity() {
 
         checkPermissions(PERMISSIONS, PERMISSIONS_REQUEST)
 
-        val btn_photo = findViewById<Button>(R.id.btn_photo)
         val lv_book_info = findViewById<ListView>(R.id.lv_book_info)
 
         // 버튼 이벤트 처리
         binding.btnPhoto.setOnClickListener {
 
             val intent:Intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            intent.resolveActivity(packageManager).also {
-                startActivityForResult(intent, photo)
-            }
+
             val photoFile = File(
                     File("${filesDir}/image").apply{
                         if(!this.exists()){
@@ -69,17 +79,20 @@ class HomeActivity : AppCompatActivity() {
                     },
                     newJpgFileName()
             )
+
             photoUri = FileProvider.getUriForFile(
                     this,
                     "com.blacklog.takepicture.fileprovider",
                     photoFile
             )
-            intent.resolveActivity(packageManager)?.also{
+
+            intent.resolveActivity(packageManager).also {
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
                 startActivityForResult(intent, photo)
             }
 
-
+            bookList.clear()
+            lv_book_info.adapter = null
 
 /*
             val input_data_bookName = findViewById<EditText>(R.id.et_photo_url)
@@ -117,7 +130,7 @@ class HomeActivity : AppCompatActivity() {
             })*/
         }
     }
-    
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK){
@@ -125,15 +138,70 @@ class HomeActivity : AppCompatActivity() {
                 photo -> {
                     val imageBitmap = photoUri?.let { ImageDecoder.createSource(this.contentResolver, it) }
                     //binding.imageView.setImageBitmap(imageBitmap?.let { ImageDecoder.decodeBitmap(it) })
-                    Toast.makeText(this, photoUri?.path, Toast.LENGTH_LONG).show()
+                    //Toast.makeText(this, photoUri?.path, Toast.LENGTH_LONG).show()
+                    val filePath = File(filesDir,"image")
+                    //Toast.makeText(this, filePath.toString(), Toast.LENGTH_LONG).show()
+                    //Toast.makeText(this, photoFileName, Toast.LENGTH_LONG).show()
+                    Log.i("System Info","UploadPhoto Start!!!")
+                    uploadPhotho(File(filePath, photoFileName), photoFileName)
                 }
             }
         }
     }
 
+    private fun uploadPhotho(img_file : File, name : String) {
+        val lv_book_info = findViewById<ListView>(R.id.lv_book_info)
+
+        // create requestBody
+        var requestBody : RequestBody = RequestBody.create(MediaType.parse("multipart/form-data"), img_file)
+        var body : MultipartBody.Part = MultipartBody.Part.createFormData("uploaded_file", name, requestBody)
+        //The gson builder
+        var gson : Gson =  GsonBuilder()
+                .setLenient()
+                .create()
+
+        //creating retrofit object
+        var retrofit =
+                Retrofit.Builder()
+                        .baseUrl(ipAddress)
+                        .addConverterFactory(GsonConverterFactory.create(gson))
+                        .build()
+
+        //creating our Image_Upload_Interface
+        var server = retrofit.create(Image_Upload_Interface::class.java)
+
+        server.post_photo_request(body).enqueue(object:Callback<List<PostResult>>{
+            override fun onFailure(call: Call<List<PostResult>>, t: Throwable) {
+                Log.i("Request Info","UploadPhoto fail!!!")
+                Log.e("Request Error", t.toString())
+            }
+
+            override fun onResponse(call: Call<List<PostResult>>, response: Response<List<PostResult>>) {
+                Log.i("Request Info","UploadPhoto Success!!!")
+
+                if(!response.body().toString().isEmpty()) {
+                    val re_size = response.body()?.size
+
+                    for (i in 0 until re_size!!) {
+                        val isbn = response.body()!![i].ISBN.toString()
+                        val name = response.body()!![i].Name.toString()
+                        val writer = response.body()!![i].Writer.toString()
+                        val quantity = response.body()!![i].Quantity.toString()
+                        val tmp = List_Book_info(isbn, name, writer, quantity)
+                        bookList.add(tmp)
+                    }
+
+                    val bookAdapter = Adapter_Book_info(applicationContext, bookList)
+                    lv_book_info.adapter = bookAdapter
+                }
+            }
+        })
+    }
+
     private fun newJpgFileName() : String {
         val sdf = SimpleDateFormat("yyyyMMdd_HHmmss")
         val filename = sdf.format(System.currentTimeMillis())
+        photoFileName = "${filename}.jpg"
         return "${filename}.jpg"
     }
 
