@@ -35,10 +35,8 @@
 
     // json_encode 수정 필요함
     $result = array();
-    $reulst["result"] = false;
-    if($output == null) {
-        $result["fail"] = false;
-    } else {
+
+    if($output != null) {
         $i = 0;
         foreach($output as $row) {
             $request_ISBN = "";
