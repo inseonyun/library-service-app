@@ -1,5 +1,5 @@
 <?php
-    $connection = mysqli_connect("localhost", "yuninseon", "password", "yuninseon");
+    $connection = mysqli_connect("localhost", "ID", "password", "schema");
     mysqli_query($connection,'SET NAMES utf8');
 
     $userID = $_POST["userID"];
@@ -31,30 +31,48 @@
         echo "Fail : have not file";
     }
 
-    exec("cd ./api/ && python3 kakaoAPI_V3.py ".$file_path, $output);
+    exec("cd ./api/ && python kakaoAPI_V3.py ".$file_path, $output);
 
     // json_encode 수정 필요함
     $result = array();
+    $reulst["result"] = false;
+    if($output == null) {
+        $result["fail"] = false;
+    } else {
+        $i = 0;
+        foreach($output as $row) {
+            $request_ISBN = "";
+            if (strpos($row, ":") == true) {
+                $request_ISBN = explode(":", $row)[1];
+                $request_ISBN = str_replace(" ", "", $request_ISBN);
+            } else {
+                $request_ISBN = str_replace(" ", "", $row);
+                $request_ISBN = str_replace("ISBN", "", $request_ISBN);
+            }
+            $request_ISBN = str_replace("-", "", $request_ISBN);
+            $request_ISBN = "%".$request_ISBN."%";
 
-    for($output as $row) {
-        // API 결과에 있는 ISBN 00000000에서 공백과 ISBN 제거
-        $request_ISBN = str_replace(" ", "", $row);
-        $request_ISBN = str_replace("ISBN", "", $request_ISBN);
-        
-        // DB Search
-        $statement = mysqli_prepare($connection, "SELECT * FROM Book_Status WHERE ISBN = ?");
-        mysqli_stmt_bind_param($statement, "s", $request_ISBN);
-        mysqli_stmt_execute($statement);
+            // DB Search
+            $statement = mysqli_prepare($connection, "SELECT * FROM book_status WHERE ISBN LIKE ?");
+            mysqli_stmt_bind_param($statement, "s", $request_ISBN);
+            mysqli_stmt_execute($statement);
 
-        mysqli_stmt_store_result($statement);
-        mysqli_stmt_bind_result($statement, $ISBN, $Name, $Writer, $Quentity);
+            mysqli_stmt_store_result($statement);
+            mysqli_stmt_bind_result($statement, $Name, $ISBN, $Writer, $Quentity);
 
-        while(mysqli_stmt_fetch($statement)) {
-            $result["ISBN"] = $ISBN;
-            $result["Name"] = $Name;
-            $result["Writer"] = $Writer;
-            $result["Quentity"] = $Quentity;
+            $result_row = array();
+            while(mysqli_stmt_fetch($statement)) {
+                $result_row["Name"] = $Name;
+                $result_row["ISBN"] = $ISBN;
+                $result_row["Writer"] = $Writer;
+                $result_row["Quentity"] = $Quentity;
+            }
+            $result[$i] = $result_row;
+            $i++;
         }
+
+        // 중복 데이터 제거
+        $result = array_map("unserialize", array_unique(array_map("serialize", $result)));
     }
 
     echo json_encode($result, JSON_UNESCAPED_UNICODE);
