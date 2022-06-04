@@ -35,7 +35,6 @@
     $result = array();
 
     if($output != null) {
-        $i = 0;
         foreach($output as $row) {
             $request_ISBN = "";
             if (strpos($row, ":") == true) {
@@ -54,17 +53,17 @@
             mysqli_stmt_execute($statement);
 
             mysqli_stmt_store_result($statement);
-            mysqli_stmt_bind_result($statement, $Name, $ISBN, $Writer, $Quentity);
+            mysqli_stmt_bind_result($statement, $BookName, $ISBN, $Writer, $Quantity);
 
             $result_row = array();
             while(mysqli_stmt_fetch($statement)) {
-                $result_row["Name"] = $Name;
+                $result_row["BookName"] = $BookName;
                 $result_row["ISBN"] = $ISBN;
                 $result_row["Writer"] = $Writer;
-                $result_row["Quentity"] = $Quentity;
+                $result_row["Quantity"] = $Quantity;
+
+                array_push($result, $result_row);
             }
-            $result[$i] = $result_row;
-            $i++;
         }
 
         // 중복 데이터 제거
