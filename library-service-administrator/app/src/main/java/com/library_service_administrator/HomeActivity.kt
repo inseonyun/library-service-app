@@ -4,25 +4,23 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Button
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.net.toFile
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.library_service_administrator.databinding.ActivityHomeBinding
 import okhttp3.MediaType
 import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -30,16 +28,16 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStream
 import java.text.SimpleDateFormat
+import java.util.concurrent.TimeUnit
+
 
 class HomeActivity : AppCompatActivity() {
     // val api = APIS.create()
     var bookList = arrayListOf<List_Book_info>()
     // ViewBinding
     lateinit var binding : ActivityHomeBinding
-    val ipAddress = "여기 ip"
+    val ipAddress = "http://여기 ip"
     // Permisisons
     val PERMISSIONS = arrayOf(
             Manifest.permission.CAMERA,
@@ -72,8 +70,8 @@ class HomeActivity : AppCompatActivity() {
             val intent:Intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
             val photoFile = File(
-                    File("${filesDir}/image").apply{
-                        if(!this.exists()){
+                    File("${filesDir}/image").apply {
+                        if (!this.exists()) {
                             this.mkdirs()
                         }
                     },
@@ -139,17 +137,18 @@ class HomeActivity : AppCompatActivity() {
                     val imageBitmap = photoUri?.let { ImageDecoder.createSource(this.contentResolver, it) }
                     //binding.imageView.setImageBitmap(imageBitmap?.let { ImageDecoder.decodeBitmap(it) })
                     //Toast.makeText(this, photoUri?.path, Toast.LENGTH_LONG).show()
-                    val filePath = File(filesDir,"image")
+                    val filePath = File(filesDir, "image")
                     //Toast.makeText(this, filePath.toString(), Toast.LENGTH_LONG).show()
                     //Toast.makeText(this, photoFileName, Toast.LENGTH_LONG).show()
-                    Log.i("System Info","UploadPhoto Start!!!")
-                    uploadPhotho(File(filePath, photoFileName), photoFileName)
+                    Log.i("System Info", "UploadPhoto Start!!!")
+                    //uploadPhotho(File(filePath, photoFileName), photoFileName)
+                    uploadPhotho(File(filePath, "photo.jpg"), "photo.jpg")
                 }
             }
         }
     }
 
-    private fun uploadPhotho(img_file : File, name : String) {
+    private fun uploadPhotho(img_file: File, name: String) {
         val lv_book_info = findViewById<ListView>(R.id.lv_book_info)
 
         // create requestBody
@@ -160,39 +159,45 @@ class HomeActivity : AppCompatActivity() {
                 .setLenient()
                 .create()
 
+        var okHttpClient = OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.MINUTES)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build()
+
         //creating retrofit object
         var retrofit =
                 Retrofit.Builder()
                         .baseUrl(ipAddress)
+                        .client(okHttpClient)
                         .addConverterFactory(GsonConverterFactory.create(gson))
                         .build()
 
         //creating our Image_Upload_Interface
         var server = retrofit.create(Image_Upload_Interface::class.java)
 
-        server.post_photo_request(body).enqueue(object:Callback<List<PostResult>>{
+        server.post_photo_request(body).enqueue(object : Callback<List<PostResult>> {
             override fun onFailure(call: Call<List<PostResult>>, t: Throwable) {
-                Log.i("Request Info","UploadPhoto fail!!!")
+                Log.i("Request Info", "UploadPhoto fail!!!")
                 Log.e("Request Error", t.toString())
             }
 
             override fun onResponse(call: Call<List<PostResult>>, response: Response<List<PostResult>>) {
-                Log.i("Request Info","UploadPhoto Success!!!")
+                Log.i("Request Info", "UploadPhoto Success!!!")
+                //Toast.makeText(applicationContext, response.body().toString(), Toast.LENGTH_SHORT).show()\
+            if(!response.body().toString().isEmpty()) {
+                val re_size = response.body()?.size
+                for(i in 0 until re_size!!) {
+                    val name = response.body()!![i].BookName.toString()
+                    val isbn = response.body()!![i].ISBN.toString()
+                    val writer = response.body()!![i].Writer.toString()
+                    val quantity = response.body()!![i].Quantity.toString()
+                    val tmp = List_Book_info(name, isbn, writer, quantity)
+                    bookList.add(tmp)
+                }
 
-                if(!response.body().toString().isEmpty()) {
-                    val re_size = response.body()?.size
-
-                    for (i in 0 until re_size!!) {
-                        val isbn = response.body()!![i].ISBN.toString()
-                        val name = response.body()!![i].Name.toString()
-                        val writer = response.body()!![i].Writer.toString()
-                        val quantity = response.body()!![i].Quantity.toString()
-                        val tmp = List_Book_info(isbn, name, writer, quantity)
-                        bookList.add(tmp)
-                    }
-
-                    val bookAdapter = Adapter_Book_info(applicationContext, bookList)
-                    lv_book_info.adapter = bookAdapter
+                val bookAdapter = Adapter_Book_info(applicationContext, bookList)
+                lv_book_info.adapter = bookAdapter
                 }
             }
         })
