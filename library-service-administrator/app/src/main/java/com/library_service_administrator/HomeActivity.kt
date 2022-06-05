@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -33,7 +34,7 @@ import java.util.concurrent.TimeUnit
 
 
 class HomeActivity : AppCompatActivity() {
-    // val api = APIS.create()
+    val api = APIS.create()
     var bookList = arrayListOf<List_Book_info>()
     // ViewBinding
     lateinit var binding : ActivityHomeBinding
@@ -64,7 +65,45 @@ class HomeActivity : AppCompatActivity() {
 
         val lv_book_info = findViewById<ListView>(R.id.lv_book_info)
 
-        // 버튼 이벤트 처리
+        // isbn 검색 버튼 이벤트 처리
+        binding.btnWrite.setOnClickListener {
+            bookList.clear()
+            lv_book_info.adapter = null
+
+            val input_data_bookName = findViewById<EditText>(R.id.et_photo_url)
+
+            // Retrofit Test
+            //Post방식으로 서버에 전달할 데이터를 파라미터에 입력
+            api.post_input(
+                    input_data_bookName.text.toString()
+            ).enqueue(object: Callback<List<PostResult>> {
+                override fun onResponse(call: Call<List<PostResult>>, response: Response<List<PostResult>>) {
+                    Log.i("Request Info", "Search ISBN Success!!!")
+                    if(!response.body().toString().isEmpty()) {
+                        val re_size = response.body()?.size
+
+                        for (i in 0 until re_size!!) {
+                            val name = response.body()!![i].BookName.toString()
+                            val isbn = response.body()!![i].ISBN.toString()
+                            val writer = response.body()!![i].Writer.toString()
+                            val quantity = response.body()!![i].Quantity.toString()
+                            val tmp = List_Book_info(name, isbn, writer, quantity)
+                            bookList.add(tmp)
+                        }
+
+                        val bookAdapter = Adapter_Book_info(applicationContext, bookList)
+                        lv_book_info.adapter = bookAdapter
+                    }
+                }
+
+                override fun onFailure(call: Call<List<PostResult>>, t: Throwable) {
+                    Log.i("Request Info", "Search ISBN Failed!!!")
+                    Log.e("Request Error", t.toString())
+                }
+            })
+        }
+        
+        // 사진 찍기 버튼 이벤트 처리
         binding.btnPhoto.setOnClickListener {
 
             val intent:Intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -91,41 +130,6 @@ class HomeActivity : AppCompatActivity() {
 
             bookList.clear()
             lv_book_info.adapter = null
-
-/*
-            val input_data_bookName = findViewById<EditText>(R.id.et_photo_url)
-
-            //val data = PostModel(input_data_bookName.text.toString())
-            bookList.clear()
-            lv_book_info.adapter = null
-
-            // Retrofit Test
-            //Post방식으로 서버에 전달할 데이터를 파라미터에 입력
-            api.post_input(
-                    input_data_bookName.text.toString()
-            ).enqueue(object: Callback<List<PostResult>> {
-                override fun onResponse(call: Call<List<PostResult>>, response: Response<List<PostResult>>) {
-                    if(!response.body().toString().isEmpty()) {
-                        val re_size = response.body()?.size
-
-                        for (i in 0 until re_size!!) {
-                            val isbn = response.body()!![i].ISBN.toString()
-                            val name = response.body()!![i].Name.toString()
-                            val writer = response.body()!![i].Writer.toString()
-                            val quantity = response.body()!![i].Quantity.toString()
-                            val tmp = List_Book_info(isbn, name, writer, quantity)
-                            bookList.add(tmp)
-                        }
-
-                        val bookAdapter = Adapter_Book_info(applicationContext, bookList)
-                        lv_book_info.adapter = bookAdapter
-                    }
-                }
-
-                override fun onFailure(call: Call<List<PostResult>>, t: Throwable) {
-                    Toast.makeText(applicationContext, "fail", Toast.LENGTH_SHORT).show()
-                }
-            })*/
         }
     }
 
@@ -178,26 +182,26 @@ class HomeActivity : AppCompatActivity() {
 
         server.post_photo_request(body).enqueue(object : Callback<List<PostResult>> {
             override fun onFailure(call: Call<List<PostResult>>, t: Throwable) {
-                Log.i("Request Info", "UploadPhoto fail!!!")
+                Log.i("Request Info", "UploadPhoto Failed!!!")
                 Log.e("Request Error", t.toString())
             }
 
             override fun onResponse(call: Call<List<PostResult>>, response: Response<List<PostResult>>) {
                 Log.i("Request Info", "UploadPhoto Success!!!")
-                //Toast.makeText(applicationContext, response.body().toString(), Toast.LENGTH_SHORT).show()\
-            if(!response.body().toString().isEmpty()) {
-                val re_size = response.body()?.size
-                for(i in 0 until re_size!!) {
-                    val name = response.body()!![i].BookName.toString()
-                    val isbn = response.body()!![i].ISBN.toString()
-                    val writer = response.body()!![i].Writer.toString()
-                    val quantity = response.body()!![i].Quantity.toString()
-                    val tmp = List_Book_info(name, isbn, writer, quantity)
-                    bookList.add(tmp)
-                }
 
-                val bookAdapter = Adapter_Book_info(applicationContext, bookList)
-                lv_book_info.adapter = bookAdapter
+                if(!response.body().toString().isEmpty()) {
+                    val re_size = response.body()?.size
+                    for(i in 0 until re_size!!) {
+                        val name = response.body()!![i].BookName.toString()
+                        val isbn = response.body()!![i].ISBN.toString()
+                        val writer = response.body()!![i].Writer.toString()
+                        val quantity = response.body()!![i].Quantity.toString()
+                        val tmp = List_Book_info(name, isbn, writer, quantity)
+                        bookList.add(tmp)
+                    }
+
+                    val bookAdapter = Adapter_Book_info(applicationContext, bookList)
+                    lv_book_info.adapter = bookAdapter
                 }
             }
         })

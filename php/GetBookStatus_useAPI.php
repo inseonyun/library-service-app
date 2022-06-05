@@ -31,7 +31,6 @@
 
     exec("cd ./api/ && python kakaoAPI_V3.py ".$file_path, $output);
 
-    // json_encode 수정 필요함
     $result = array();
 
     if($output != null) {
