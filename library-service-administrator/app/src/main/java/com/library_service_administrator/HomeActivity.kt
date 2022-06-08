@@ -1,39 +1,24 @@
 package com.library_service_administrator
 
 import android.Manifest
-import android.app.Activity
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.ImageDecoder
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
-import android.util.Log
-import android.widget.EditText
-import android.widget.ListView
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.library_service_administrator.databinding.ActivityHomeBinding
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.concurrent.TimeUnit
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.navigation.NavigationView
 
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+    // menubar
+    lateinit var navigationView : NavigationView
+    lateinit var drawer_layout : DrawerLayout
+
     // Permisisons
     val PERMISSIONS = arrayOf(
             Manifest.permission.CAMERA,
@@ -43,8 +28,20 @@ class HomeActivity : AppCompatActivity() {
     val PERMISSIONS_REQUEST = 100
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_home)
+
+        // menubar
+        drawer_layout = findViewById(R.id.drawerLayout)
+        navigationView = findViewById(R.id.navigation_view)
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+
+        setSupportActionBar(toolbar) // 툴바를 액티비티의 앱바로 지정
+        supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu) // 홈버튼 이미지 변경
+        supportActionBar?.setDisplayShowTitleEnabled(false) // 툴바에 타이틀 안보이게
+        navigationView.setNavigationItemSelectedListener(this) //navigation 리스너
+
         supportFragmentManager.beginTransaction()
             .replace(R.id.frame_main, Fragment_Search())
             .commit()
@@ -80,6 +77,34 @@ class HomeActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item!!.itemId){
+            android.R.id.home->{ // 메뉴 버튼
+                drawer_layout.openDrawer(GravityCompat.START)    // 네비게이션 드로어 열기
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        if(drawer_layout.isDrawerOpen(GravityCompat.START)){
+            drawer_layout.closeDrawers()
+            // 테스트를 위해 뒤로가기 버튼시 Toast 메시지
+            Toast.makeText(this,"back btn clicked",Toast.LENGTH_SHORT).show()
+        } else{
+            super.onBackPressed()
+        }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.account-> Toast.makeText(this,"account clicked",Toast.LENGTH_SHORT).show()
+            R.id.search-> Toast.makeText(this,"item2 clicked",Toast.LENGTH_SHORT).show()
+            R.id.loan_return-> Toast.makeText(this,"item3 clicked",Toast.LENGTH_SHORT).show()
+        }
+        return false
     }
 }
 
