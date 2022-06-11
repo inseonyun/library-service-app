@@ -26,6 +26,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             Manifest.permission.READ_EXTERNAL_STORAGE
     )
     val PERMISSIONS_REQUEST = 100
+
+    // frame_index
+    // 0은 serach 화면
+    // 1은 대출 / 반납 화면
+    var frame_index = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -45,7 +51,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         supportFragmentManager.beginTransaction()
             .replace(R.id.frame_main, Fragment_Search())
             .commit()
-
 
         checkPermissions(PERMISSIONS, PERMISSIONS_REQUEST)
 
@@ -101,8 +106,20 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.account-> Toast.makeText(this,"account clicked",Toast.LENGTH_SHORT).show()
-            R.id.search-> Toast.makeText(this,"item2 clicked",Toast.LENGTH_SHORT).show()
-            R.id.loan_return-> Toast.makeText(this,"item3 clicked",Toast.LENGTH_SHORT).show()
+            R.id.search-> if(frame_index != 0) {
+                supportFragmentManager.beginTransaction()
+                    .remove(Fragment_Loan_Return())
+                    .replace(R.id.frame_main, Fragment_Search())
+                    .commit()
+                frame_index = 0
+            }
+            R.id.loan_return-> if(frame_index != 1) {
+                supportFragmentManager.beginTransaction()
+                    .remove(Fragment_Search())
+                    .replace(R.id.frame_main, Fragment_Loan_Return())
+                    .commit()
+                frame_index = 1
+            }
         }
         return false
     }
