@@ -1,9 +1,7 @@
 package com.library_service_administrator
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Bundle
@@ -38,7 +36,7 @@ class Fragment_Search : Fragment() {
     private val binding get() = _binding!!
 
     // Retrofit API
-    val api = APIS.create()
+    val api = API_Input_ISBN.create()
 
     // Server IP
     val ipAddress = "http://여기 ip"

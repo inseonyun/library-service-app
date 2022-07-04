@@ -10,7 +10,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
-interface APIS {
+interface API_Input_ISBN {
     //post -> php 파일 주소
     @FormUrlEncoded
     @POST("/GetBookStatus_useInput.php")
@@ -29,13 +29,13 @@ interface APIS {
     companion object { // static 처럼 공유객체로 사용가능함. 모든 인스턴스가 공유하는 객체로서 동작함.
         //서버 IP만 입력
         private const val BASE_URL = "http://여기 ip"
-        fun create(): APIS {
+        fun create(): API_Input_ISBN {
             val gson: Gson = GsonBuilder().setLenient().create();
             return Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()
-                .create(APIS::class.java)
+                .create(API_Input_ISBN::class.java)
         }
     }
 }

@@ -18,7 +18,9 @@ class Fragment_Loan_Return : Fragment() {
         _binding = FragmentLoanReturnBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        binding.btnSearchingUser.setOnClickListener {
 
+        }
 
         // Inflate the layout for this fragment
         return view
