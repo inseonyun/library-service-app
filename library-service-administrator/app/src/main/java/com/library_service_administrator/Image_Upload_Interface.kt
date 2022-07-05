@@ -12,4 +12,7 @@ interface Image_Upload_Interface {
 
     fun post_photo_request(
         @Part imageFile : MultipartBody.Part): Call<List<PostResult>>
+
+    fun post_photo_loan_request(
+            @Part imageFile : MultipartBody.Part): Call<List<PostPhoto>>
 }

@@ -25,6 +25,9 @@ interface API_Input_ISBN {
         @Field("input") input: String
     ): Call<List<PostResult>>
 
+    fun post_input_isbn (
+        @Field("input") input: String
+    ): Call<List<PostPhoto>>
 
     companion object { // static 처럼 공유객체로 사용가능함. 모든 인스턴스가 공유하는 객체로서 동작함.
         //서버 IP만 입력
