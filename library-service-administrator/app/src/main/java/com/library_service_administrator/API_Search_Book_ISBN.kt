@@ -10,10 +10,10 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
-interface API_Input_ISBN {
+interface API_Search_Book_ISBN {
     //post -> php 파일 주소
     @FormUrlEncoded
-    @POST("/GetBookStatus_useInput.php")
+    @POST("/Search_ISBN_Get_Book_Status.php")
     @Headers(
         "accept: application/json",
         //"content-type: application/json; charset=utf-8"
@@ -21,20 +21,20 @@ interface API_Input_ISBN {
     )
 
     //post로 서버에 데이터를 보내는 메서드
-    fun post_input(
+    fun post_input_isbn (
         @Field("input") input: String
-    ): Call<List<PostResult>>
+    ): Call<List<PostPhoto>>
 
     companion object { // static 처럼 공유객체로 사용가능함. 모든 인스턴스가 공유하는 객체로서 동작함.
         //서버 IP만 입력
         private const val BASE_URL = "http://여기 ip"
-        fun create(): API_Input_ISBN {
+        fun create(): API_Search_Book_ISBN {
             val gson: Gson = GsonBuilder().setLenient().create();
             return Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()
-                .create(API_Input_ISBN::class.java)
+                .create(API_Search_Book_ISBN::class.java)
         }
     }
 }

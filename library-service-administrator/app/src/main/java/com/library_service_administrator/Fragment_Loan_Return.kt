@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ListView
+import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -37,7 +38,7 @@ class Fragment_Loan_Return : Fragment() {
 
     // Retrofit API
     val api_search_user = API_Search_User.create()
-    val api_search_isbn = API_Input_ISBN.create()
+    val api_search_isbn = API_Search_Book_ISBN.create()
 
     // Server IP
     val ipAddress = "http://여기 ip"
@@ -61,8 +62,7 @@ class Fragment_Loan_Return : Fragment() {
         _binding = FragmentLoanReturnBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        val lv_loan_info = view.findViewById<ListView>(R.id.lv_loan_info)
-
+        val lv_loan_info = view.findViewById<ListView>(R.id.lv_loan_book_info)
 
         // 유저 조회
         binding.btnSearchingUser.setOnClickListener {
@@ -70,7 +70,7 @@ class Fragment_Loan_Return : Fragment() {
         }
 
         // isbn 입력 조회
-        binding.btnWrite.setOnClickListener {
+        binding.btnIsbnSearch.setOnClickListener {
             bookList.clear()
             lv_loan_info.adapter = null
 
@@ -83,7 +83,8 @@ class Fragment_Loan_Return : Fragment() {
             ).enqueue(object: Callback<List<PostPhoto>> {
                 override fun onResponse(call: Call<List<PostPhoto>>, response: Response<List<PostPhoto>>) {
                     Log.i("Request Info", "Search ISBN Success!!!")
-                    if(!response.body().toString().isEmpty()) {
+
+                    if(!response.body().toString().isNullOrEmpty()) {
                         val re_size = response.body()?.size
 
                         for (i in 0 until re_size!!) {
@@ -106,6 +107,7 @@ class Fragment_Loan_Return : Fragment() {
             })
         }
 
+        /*
         // 사진으로 책 조회
         binding.btnPhoto.setOnClickListener {
             val intent: Intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -131,7 +133,7 @@ class Fragment_Loan_Return : Fragment() {
 
             bookList.clear()
             lv_loan_info.adapter = null
-        }
+        }*/
 
         // Inflate the layout for this fragment
         return view
@@ -148,13 +150,8 @@ class Fragment_Loan_Return : Fragment() {
             when(requestCode) {
                 photo -> {
                     val imageBitmap = photoUri?.let { ImageDecoder.createSource(requireContext().contentResolver, it) }
-                    //binding.imageView.setImageBitmap(imageBitmap?.let { ImageDecoder.decodeBitmap(it) })
-                    //Toast.makeText(this, photoUri?.path, Toast.LENGTH_LONG).show()
                     val filePath = File(requireContext().filesDir, "image")
-                    //Toast.makeText(this, filePath.toString(), Toast.LENGTH_LONG).show()
-                    //Toast.makeText(this, photoFileName, Toast.LENGTH_LONG).show()
                     Log.i("System Info", "UploadPhoto Start!!!")
-                    //uploadPhotho(File(filePath, photoFileName), photoFileName)
                     uploadPhotho(File(filePath, "photo.jpg"), "photo.jpg")
                 }
             }

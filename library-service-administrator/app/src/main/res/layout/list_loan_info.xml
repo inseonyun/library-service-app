@@ -16,7 +16,7 @@
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@drawable/table_inside"
                 android:id="@+id/tv_book_name"
@@ -30,7 +30,7 @@
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@drawable/table_inside"
                 android:id="@+id/tv_book_return_date"
@@ -44,8 +44,6 @@
 
             <Button
                 android:layout_width="0dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:id="@+id/btn_book_status"
