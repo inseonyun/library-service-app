@@ -8,7 +8,8 @@ data class PostUser(
 )
 
 data class PostUserResult(
+    var UserID: String? = null,
     var BookName: String? = null,
-    var LoanDate : String? = null,
-    var ReturenDate : String? = null
+    var BookLoanDate : String? = null,
+    var BookReturnDate : String? = null
 )

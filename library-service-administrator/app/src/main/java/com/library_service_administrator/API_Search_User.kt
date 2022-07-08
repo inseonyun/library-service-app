@@ -22,10 +22,8 @@ interface API_Search_User {
 
     //post로 서버에 데이터를 보내는 메서드
     fun post_input(
-        @Field("input") input: String,
-        @Field("type") type: Int        // type : 0 은 id로 검색, 1은 유저 이름으로 검색
+        @Field("input") input: String
     ): Call<List<PostUserResult>>
-
 
     companion object { // static 처럼 공유객체로 사용가능함. 모든 인스턴스가 공유하는 객체로서 동작함.
         //서버 IP만 입력

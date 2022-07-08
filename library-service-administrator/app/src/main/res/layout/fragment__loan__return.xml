@@ -103,7 +103,7 @@
 
             <!-- 해당 유저의 대출 정보 아래 출력 -->
             <ListView
-                android:id="@+id/lv_loan_info"
+                android:id="@+id/lv_user_info"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"></ListView>
         </TableLayout>

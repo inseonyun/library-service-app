@@ -44,7 +44,7 @@ class Fragment_Loan_Return : Fragment() {
     val ipAddress = "http://여기 ip"
 
     // userList
-    //var userList = arrayListOf<>()
+    var userList = arrayListOf<List_User_info>()
 
     // BookList
     var bookList = arrayListOf<List_Loan_info>()
@@ -62,10 +62,45 @@ class Fragment_Loan_Return : Fragment() {
         _binding = FragmentLoanReturnBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        // 리스트뷰 연결
+        val lv_user_info = view.findViewById<ListView>(R.id.lv_user_info)
         val lv_loan_info = view.findViewById<ListView>(R.id.lv_loan_book_info)
 
         // 유저 조회
         binding.btnSearchingUser.setOnClickListener {
+            userList.clear()
+            lv_user_info.adapter = null
+
+            val input_data_userID = view.findViewById<EditText>(R.id.et_userID)
+
+            api_search_user.post_input(
+                    input_data_userID.text.toString()
+            ).enqueue(object: Callback<List<PostUserResult>>{
+                override fun onResponse(call: Call<List<PostUserResult>>, response: Response<List<PostUserResult>>) {
+                    Log.i("Request Info", "Search User Success!!!")
+
+                    if(!response.body().toString().isNullOrEmpty()) {
+                        val re_size = response.body()?.size
+
+                        for (i in 0 until re_size!!) {
+                            val userID = response.body()!![i].UserID.toString()
+                            val book_name = response.body()!![i].BookName.toString()
+                            val book_loan_date = response.body()!![i].BookLoanDate.toString()
+                            val book_return_date = response.body()!![i].BookReturnDate.toString()
+                            val tmp = List_User_info(userID, book_name, book_loan_date, book_return_date)
+                            userList.add(tmp)
+                        }
+
+                        val bookAdapter = Adapter_User_info(requireContext().applicationContext, userList)
+                        lv_user_info.adapter = bookAdapter
+                    }
+                }
+
+                override fun onFailure(call: Call<List<PostUserResult>>, t: Throwable) {
+                    Log.i("Request Info", "Search ISBN Failed!!!")
+                    Log.e("Request Error", t.toString())
+                }
+            })
 
         }
 
@@ -158,7 +193,7 @@ class Fragment_Loan_Return : Fragment() {
         }
     }
     private fun uploadPhotho(img_file: File, name: String) {
-        val lv_loan_info = view?.findViewById<ListView>(R.id.lv_loan_info)
+        val lv_loan_info = view?.findViewById<ListView>(R.id.lv_loan_book_info)
 
         // create requestBody
         var requestBody : RequestBody = RequestBody.create(MediaType.parse("multipart/form-data"), img_file)
