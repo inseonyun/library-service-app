@@ -112,6 +112,10 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .replace(R.id.frame_main, Fragment_Search())
                     .commit()
                 frame_index = 0
+
+                // 화면 전환 시 드로어 닫음
+                if(drawer_layout.isDrawerOpen(GravityCompat.START))
+                    drawer_layout.closeDrawers()
             }
             R.id.loan_return-> if(frame_index != 1) {
                 supportFragmentManager.beginTransaction()
@@ -119,6 +123,10 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .replace(R.id.frame_main, Fragment_Loan_Return())
                     .commit()
                 frame_index = 1
+
+                // 화면 전환 시 드로어 닫음
+                if(drawer_layout.isDrawerOpen(GravityCompat.START))
+                    drawer_layout.closeDrawers()
             }
         }
         return false
