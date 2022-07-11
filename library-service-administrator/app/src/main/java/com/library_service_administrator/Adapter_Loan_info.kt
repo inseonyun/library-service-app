@@ -1,14 +1,19 @@
 package com.library_service_administrator
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class Adapter_Loan_info (val context: Context, val bookList: ArrayList<List_Loan_info>) : BaseAdapter() {
+class Adapter_Loan_info (val userID: String, val context: Context, val bookList: ArrayList<List_Loan_info>) : BaseAdapter() {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view: View = LayoutInflater.from(context).inflate(R.layout.list_loan_info, null)
 
@@ -25,6 +30,29 @@ class Adapter_Loan_info (val context: Context, val bookList: ArrayList<List_Loan
         } else {
             book_status.text = "불가"
             book_status.isEnabled = false
+        }
+
+        if(book_status.isEnabled == true) {
+            // 대출 기능 이벤트 처리
+            book_status.setOnClickListener {
+                API_Loan_Book.create().post_input(
+                        userID,
+                        book.BookName.toString()
+                ).enqueue(object: Callback<PostLoanReturnResult> {
+                    override fun onResponse(call: Call<PostLoanReturnResult>, response: Response<PostLoanReturnResult>) {
+                        Log.i("Request Info", "Loan Book Success!!!")
+
+                        if(!response.body().toString().isNullOrEmpty()) {
+                            // 대출 이벤트 처리
+                        }
+                    }
+
+                    override fun onFailure(call: Call<PostLoanReturnResult>, t: Throwable) {
+                        Log.i("Request Info", "Loan Book Failed!!!")
+                        Log.e("Request Error", t.toString())
+                    }
+                })
+            }
         }
 
         return view

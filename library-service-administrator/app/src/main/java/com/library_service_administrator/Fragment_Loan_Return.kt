@@ -57,6 +57,9 @@ class Fragment_Loan_Return : Fragment() {
     // 포토 파일네임
     private var photoFileName = ""
 
+    // 유저 id 저장할 변수
+    var userID = ""
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         _binding = FragmentLoanReturnBinding.inflate(inflater, container, false)
@@ -83,7 +86,8 @@ class Fragment_Loan_Return : Fragment() {
                         val re_size = response.body()?.size
 
                         for (i in 0 until re_size!!) {
-                            val userID = response.body()!![i].UserID.toString()
+                            userID = response.body()!![i].UserID.toString()
+                            binding.textviewUserID.text = userID + "님 안녕하세요!"
                             val book_name = response.body()!![i].BookName.toString()
                             val book_loan_date = response.body()!![i].BookLoanDate.toString()
                             val book_return_date = response.body()!![i].BookReturnDate.toString()
@@ -130,7 +134,7 @@ class Fragment_Loan_Return : Fragment() {
                             bookList.add(tmp)
                         }
 
-                        val bookAdapter = Adapter_Loan_info(requireContext().applicationContext, bookList)
+                        val bookAdapter = Adapter_Loan_info(userID, requireContext().applicationContext, bookList)
                         lv_loan_info.adapter = bookAdapter
                     }
                 }
@@ -239,7 +243,7 @@ class Fragment_Loan_Return : Fragment() {
                         bookList.add(tmp)
                     }
 
-                    val bookAdapter = Adapter_Loan_info(requireContext().applicationContext, bookList)
+                    val bookAdapter = Adapter_Loan_info(userID, requireContext().applicationContext, bookList)
                     lv_loan_info?.adapter = bookAdapter
                 }
             }
