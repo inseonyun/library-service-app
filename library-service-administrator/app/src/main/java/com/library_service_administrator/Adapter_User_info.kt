@@ -44,7 +44,7 @@ class Adapter_User_info (val context: Context, val bookList: ArrayList<List_User
                 }
 
                 override fun onFailure(call: Call<PostLoanReturnResult>, t: Throwable) {
-                    Log.i("Request Info", "Search Book Failed!!!")
+                    Log.i("Request Info", "Return Book Failed!!!")
                     Log.e("Request Error", t.toString())
                 }
             })
