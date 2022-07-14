@@ -34,7 +34,9 @@
     2. Github Action을 이용하여, 필요한 데이터를 주기적으로 DB에 업로드
     
   ### DataBase
-    1. BooStatus 테이블 생성 - 책명, ISBN, 저자, 수량
+    1. BookStatus 테이블 생성 - 책명, ISBN, 저자, 수량
+    2. user_info 테이블 생성 - id, 이름, 나이
+    3. loan_info 테이블 생성 - id, 책명, 대출날짜, 
 ---
 
 ## 현재 개발 단계
