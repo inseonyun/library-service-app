@@ -146,33 +146,32 @@ class Fragment_Loan_Return : Fragment() {
             })
         }
 
-        /*
         // 사진으로 책 조회
         binding.btnPhoto.setOnClickListener {
+            bookList.clear()
+            lv_loan_info.adapter = null
+
             val intent: Intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
             val photoFile = File(
-                    File("${requireContext().filesDir}/image").apply {
-                        if (!this.exists()) {
-                            this.mkdirs()
-                        }
-                    },
-                    newJpgFileName()
+                File("${requireContext().filesDir}/image").apply {
+                    if (!this.exists()) {
+                        this.mkdirs()
+                    }
+                },
+                newJpgFileName()
             )
 
             photoUri = FileProvider.getUriForFile(
-                    requireContext(),
-                    "com.blacklog.takepicture.fileprovider",
-                    photoFile
+                requireContext(),
+                "com.blacklog.takepicture.fileprovider",
+                photoFile
             )
             intent.resolveActivity(requireContext().packageManager).also {
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
                 startActivityForResult(intent, photo)
             }
-
-            bookList.clear()
-            lv_loan_info.adapter = null
-        }*/
+        }
 
         // Inflate the layout for this fragment
         return view
@@ -197,32 +196,32 @@ class Fragment_Loan_Return : Fragment() {
         }
     }
     private fun uploadPhotho(img_file: File, name: String) {
-        val lv_loan_info = view?.findViewById<ListView>(R.id.lv_loan_book_info)
+        val lv_loan_photo_info = view?.findViewById<ListView>(R.id.lv_loan_book_info)
 
         // create requestBody
         var requestBody : RequestBody = RequestBody.create(MediaType.parse("multipart/form-data"), img_file)
         var body : MultipartBody.Part = MultipartBody.Part.createFormData("uploaded_file", name, requestBody)
         //The gson builder
         var gson : Gson =  GsonBuilder()
-                .setLenient()
-                .create()
+            .setLenient()
+            .create()
 
         var okHttpClient = OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.MINUTES)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .build()
+            .connectTimeout(30, TimeUnit.MINUTES)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build()
 
         //creating retrofit object
         var retrofit =
-                Retrofit.Builder()
-                        .baseUrl(ipAddress)
-                        .client(okHttpClient)
-                        .addConverterFactory(GsonConverterFactory.create(gson))
-                        .build()
+            Retrofit.Builder()
+                .baseUrl(ipAddress)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build()
 
         //creating our Image_Upload_Interface
-        var server = retrofit.create(Image_Upload_Interface::class.java)
+        var server = retrofit.create(Image_Upload_Loan_Interface::class.java)
 
         server.post_photo_loan_request(body).enqueue(object : Callback<List<PostPhoto>> {
             override fun onFailure(call: Call<List<PostPhoto>>, t: Throwable) {
@@ -231,20 +230,25 @@ class Fragment_Loan_Return : Fragment() {
             }
 
             override fun onResponse(call: Call<List<PostPhoto>>, response: Response<List<PostPhoto>>) {
-                Log.i("Request Info", "UploadPhoto Success!!!")
-
-                if(!response.body().toString().isEmpty()) {
+                if(!response.body().isNullOrEmpty()) {
+                    Log.i("Request Info", "UploadPhoto Success!!!")
                     val re_size = response.body()?.size
-                    for(i in 0 until re_size!!) {
-                        val book_name = response.body()!![i].BookName.toString()
-                        val booK_return_date = response.body()!![i].BookReturnDate.toString()
-                        val book_status = response.body()!![i].BookStatus.toString()
-                        val tmp = List_Loan_info(book_name, booK_return_date, book_status)
-                        bookList.add(tmp)
-                    }
 
-                    val bookAdapter = Adapter_Loan_info(userID, requireContext().applicationContext, bookList)
-                    lv_loan_info?.adapter = bookAdapter
+                    if(re_size != null) {
+                        for (i in 0 until re_size!!) {
+                            val book_name = response.body()!![i].BookName.toString()
+                            val book_return_date = response.body()!![i].BookReturnDate.toString()
+                            val book_status = response.body()!![i].BookStatus.toString()
+                            val tmp = List_Loan_info(book_name, book_return_date, book_status)
+                            bookList.add(tmp)
+                        }
+
+                        val bookAdapter = Adapter_Loan_info(userID, requireContext().applicationContext, bookList)
+                        lv_loan_photo_info?.adapter = bookAdapter
+                    }
+                }
+                else {
+                    Toast.makeText(context, "데이터 조회 실패하였습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
         })
