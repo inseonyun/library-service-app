@@ -23,6 +23,7 @@
     3. Retrofit2를 이용한 서버와의 통신 기능 구현
     4. Activity로 구현되어 있는 메인 화면 Fragment로 변환 
     5. Navigation Drawer를 이용하여 책 정보 조회, 대출/반납 처리 화면 전환하는 기능 구현
+    6. 도서 대출 / 반납 Fragment에서 ISBN 인식 기능 구현
     
   ### Server
     1. ubuntu - Apache2 서버 구축
@@ -40,4 +41,4 @@
 ---
 
 ## 현재 개발 단계
-### 도서 대출 / 반납 Fragment에서 ISBN 인식 기능 구현
+### 로그인, 로그아웃 기능 구현
