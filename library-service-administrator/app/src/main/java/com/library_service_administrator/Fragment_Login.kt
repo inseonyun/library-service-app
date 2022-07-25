@@ -31,15 +31,14 @@ class Fragment_Login : Fragment() {
         binding.btnLogin.setOnClickListener {
             val id = binding.etId.text.toString()
             val password = binding.etPassword.text.toString()
-
+            var pl = PostLogin(id, password)
             api_login.post_input(
-                id,
-                password
+                pl
             ).enqueue(object: Callback<PostLoginResult> {
                 override fun onResponse(call: Call<PostLoginResult>, response: Response<PostLoginResult>) {
-                    Log.i("Request Info", "Login User Success!!!")
 
                     if(!response.body().toString().isNullOrEmpty()) {
+                        Log.i("Request Info", "Login User Success!!!")
                         Toast.makeText(context, response.body()?.content.toString(), Toast.LENGTH_SHORT).show()
                     }
                 }
