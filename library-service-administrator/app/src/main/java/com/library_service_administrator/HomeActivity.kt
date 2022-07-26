@@ -1,6 +1,7 @@
 package com.library_service_administrator
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
@@ -49,7 +50,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navigationView.setNavigationItemSelectedListener(this) //navigation 리스너
 
         supportFragmentManager.beginTransaction()
-            .replace(R.id.frame_main, Fragment_Login())
+            .replace(R.id.frame_main, Fragment_Search())
             .commit()
 
         checkPermissions(PERMISSIONS, PERMISSIONS_REQUEST)
@@ -105,17 +106,20 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.logout-> if(frame_index != 0) {
+            R.id.logout-> {
                 supportFragmentManager.beginTransaction()
                     .remove(Fragment_Loan_Return())
                     .remove(Fragment_Search())
-                    .replace(R.id.frame_main, Fragment_Login())
                     .commit()
-                frame_index = 0
 
                 // 화면 전환 시 드로어 닫음
                 if(drawer_layout.isDrawerOpen(GravityCompat.START))
                     drawer_layout.closeDrawers()
+
+                // 액티비티 이동
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
             }
             R.id.search-> if(frame_index != 1) {
                 supportFragmentManager.beginTransaction()
