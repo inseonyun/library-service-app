@@ -49,7 +49,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navigationView.setNavigationItemSelectedListener(this) //navigation 리스너
 
         supportFragmentManager.beginTransaction()
-            .replace(R.id.frame_main, Fragment_Search())
+            .replace(R.id.frame_main, Fragment_Login())
             .commit()
 
         checkPermissions(PERMISSIONS, PERMISSIONS_REQUEST)
@@ -105,11 +105,11 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.account-> Toast.makeText(this,"account clicked",Toast.LENGTH_SHORT).show()
-            R.id.search-> if(frame_index != 0) {
+            R.id.logout-> if(frame_index != 0) {
                 supportFragmentManager.beginTransaction()
                     .remove(Fragment_Loan_Return())
-                    .replace(R.id.frame_main, Fragment_Search())
+                    .remove(Fragment_Search())
+                    .replace(R.id.frame_main, Fragment_Login())
                     .commit()
                 frame_index = 0
 
@@ -117,12 +117,25 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if(drawer_layout.isDrawerOpen(GravityCompat.START))
                     drawer_layout.closeDrawers()
             }
-            R.id.loan_return-> if(frame_index != 1) {
+            R.id.search-> if(frame_index != 1) {
                 supportFragmentManager.beginTransaction()
+                    .remove(Fragment_Login())
+                    .remove(Fragment_Loan_Return())
+                    .replace(R.id.frame_main, Fragment_Search())
+                    .commit()
+                frame_index = 1
+
+                // 화면 전환 시 드로어 닫음
+                if(drawer_layout.isDrawerOpen(GravityCompat.START))
+                    drawer_layout.closeDrawers()
+            }
+            R.id.loan_return-> if(frame_index != 2) {
+                supportFragmentManager.beginTransaction()
+                    .remove(Fragment_Login())
                     .remove(Fragment_Search())
                     .replace(R.id.frame_main, Fragment_Loan_Return())
                     .commit()
-                frame_index = 1
+                frame_index = 2
 
                 // 화면 전환 시 드로어 닫음
                 if(drawer_layout.isDrawerOpen(GravityCompat.START))
