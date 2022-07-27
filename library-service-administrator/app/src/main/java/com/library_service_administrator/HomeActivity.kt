@@ -1,11 +1,13 @@
 package com.library_service_administrator
 
 import android.Manifest
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
@@ -107,19 +109,29 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.logout-> {
-                supportFragmentManager.beginTransaction()
-                    .remove(Fragment_Loan_Return())
-                    .remove(Fragment_Search())
-                    .commit()
+                //다이얼로그 표시
+                val dialog_builder = AlertDialog.Builder(this)
+                dialog_builder.setTitle("로그아웃")
+                        .setMessage("로그아웃 하시겠습니까?")
+                        .setPositiveButton("예", DialogInterface.OnClickListener{ dialog, id->
+                            supportFragmentManager.beginTransaction()
+                                    .remove(Fragment_Loan_Return())
+                                    .remove(Fragment_Search())
+                                    .commit()
 
-                // 화면 전환 시 드로어 닫음
-                if(drawer_layout.isDrawerOpen(GravityCompat.START))
-                    drawer_layout.closeDrawers()
+                            // 화면 전환 시 드로어 닫음
+                            if(drawer_layout.isDrawerOpen(GravityCompat.START))
+                                drawer_layout.closeDrawers()
 
-                // 액티비티 이동
-                val intent = Intent(this, LoginActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
+                            // 액티비티 이동
+                            val intent = Intent(this, LoginActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                        })
+                        .setNegativeButton("취소", DialogInterface.OnClickListener{ dialog, id->
+                            Toast.makeText(this, "취소하였습니다.", Toast.LENGTH_SHORT).show()
+                        })
+                dialog_builder.show()
             }
             R.id.search-> if(frame_index != 1) {
                 supportFragmentManager.beginTransaction()
