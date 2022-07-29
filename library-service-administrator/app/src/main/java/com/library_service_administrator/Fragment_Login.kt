@@ -38,12 +38,20 @@ class Fragment_Login : Fragment() {
                 override fun onResponse(call: Call<PostLoginResult>, response: Response<PostLoginResult>) {
 
                     if(!response.body().toString().isNullOrEmpty()) {
-                        Log.i("Request Info", "Login User Success!!!")
-                        Toast.makeText(context, response.body()?.content.toString(), Toast.LENGTH_SHORT).show()
+                        if(!response.body()?.content.toString().isNullOrEmpty()) {
+                            // 로그인 성공
+                            Log.i("Request Info", "Login User Success!!!")
+                            Toast.makeText(context, response.body()?.content.toString(), Toast.LENGTH_SHORT).show()
+
+                        } else {
+                            // 로그인 실패
+                            Toast.makeText(context, "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
 
                 override fun onFailure(call: Call<PostLoginResult>, t: Throwable) {
+                    // 로그인 실패
                     Log.i("Request Info", "Login User Failed!!!")
                     Log.e("Request Error", t.toString())
                 }

@@ -123,6 +123,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             if(drawer_layout.isDrawerOpen(GravityCompat.START))
                                 drawer_layout.closeDrawers()
 
+                            // 자동 로그인 토큰 정보 삭제
+                            val shared = getSharedPreferences("library-service-token", MODE_PRIVATE)
+                            val shared_editor = shared.edit()
+                            shared_editor.clear()
+                            shared_editor.apply()
+
                             // 액티비티 이동
                             val intent = Intent(this, LoginActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
