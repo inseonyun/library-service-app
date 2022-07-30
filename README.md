@@ -5,7 +5,7 @@
 ---
 
 ## 사용 기술
-+ Kotlin, Python, PHP, MySQL, Server(ubuntu-Apache2), Kakao Vision API
++ Kotlin, Python, PHP, MySQL, Server(ubuntu-Apache2), Kakao Vision API, Rest API
 ---
 
 ## 개발 목표
@@ -24,6 +24,7 @@
     4. Activity로 구현되어 있는 메인 화면 Fragment로 변환 
     5. Navigation Drawer를 이용하여 책 정보 조회, 대출/반납 처리 화면 전환하는 기능 구현
     6. 도서 대출 / 반납 Fragment에서 ISBN 인식 기능 구현
+    7. Rest API 토큰 방식 로그인, 자동 로그인 기능 구현
     
   ### Server
     1. ubuntu - Apache2 서버 구축
@@ -41,4 +42,4 @@
 ---
 
 ## 현재 개발 단계
-### 로그인, 로그아웃 기능 구현
+### 로딩 화면 구현 및 대출, 반납 이벤트 토스트 메시지 표시
